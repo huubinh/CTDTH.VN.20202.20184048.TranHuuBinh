@@ -1,0 +1,72 @@
+PROGRAM  IntArray;
+TYPE T = INTEGER;
+VAR  A : ARRAY(. 10 .) OF T;
+
+PROCEDURE INPUT;
+VAR I : INTEGER;
+BEGIN
+  FOR I := 1 TO 10 DO
+     A(.I.) := READI;
+END;
+
+PROCEDURE OUTPUT;
+VAR I : INTEGER;
+BEGIN
+  CALL WRITELN;
+  FOR I := 1 TO 10 DO
+     BEGIN
+       CALL WRITEI(A(.I.));
+       CALL WRITELN;
+     END
+END;
+
+PROCEDURE MIN;
+VAR I: INTEGER;
+    M : INTEGER;
+BEGIN
+    M := A(.1.);
+    I := 2;
+    WHILE I <= 10 DO
+     BEGIN
+       IF A(.I.) < M THEN M := A(.I.);
+       I := I + 1;
+     END;
+    CALL WRITELN;
+    CALL WRITEI(M);
+    CALL WRITELN;
+END;
+
+PROCEDURE DIFF;
+VAR I: INTEGER;
+    J: INTEGER;
+    C: INTEGER;
+BEGIN
+    CALL WRITELN;
+    I := 1;
+    C := 0;
+    WHILE I <= 9 DO
+        BEGIN
+        J := I + 1;
+        WHILE J <= 10 DO
+            BEGIN
+            IF A(.I.) = A(.J.) THEN 
+                BEGIN
+                IF C = 0 THEN 
+                    BEGIN
+                    CALL WRITEC('N');
+                    C := 1;
+                    END;
+                END;
+            J := J + 1;
+            END;
+        I := I + 1;
+        END;
+    IF C = 0 THEN CALL WRITEC('Y');
+END;
+
+BEGIN
+    CALL INPUT;
+    CALL OUTPUT;
+    CALL MIN;
+    CALL DIFF
+END.

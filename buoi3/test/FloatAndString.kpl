@@ -1,5 +1,7 @@
 Program Example1; (* Example 1 *)
-VAR I:FLOAT;
+TYPE T = INTEGER;
+VAR A : ARRAY(.10.) OF T;
+    I:FLOAT;
     D:STRING;
 Begin
 I:= 1.5;
@@ -8,6 +10,6 @@ I:= +1.5;
 I:= +5;
 I:= 5;
 I:= .5;
-I:= 5.;
+I:= 5;
 D:="hello";
 End. (* Example 1 *)

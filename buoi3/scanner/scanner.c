@@ -104,26 +104,66 @@ Token* readNumber(void) {
   return token;
 }
 
-Token* readFloat(void) {
+int flag = 0;
+Token* readIntFloat(void) {
   // TODO
   Token *token;
-  int i = 0, flag = 0;
+  int i = 0, dot = 0;
   
   token = makeToken(TK_FLOAT, lineNo, colNo);
+  do {
+    if (charCodes[currentChar] == CHAR_DIGIT) {
+        token->string[i] = currentChar;
+        i++;
+        readChar();
+    }
+    else {
+      readChar();
+      if (charCodes[currentChar] == CHAR_DIGIT){
+        dot++;
+        token->string[i] = '.';
+        i++;
 
-  while ( charCodes[currentChar] == CHAR_DIGIT || charCodes[currentChar] == CHAR_PERIOD ){
-    if( charCodes[currentChar] == CHAR_PERIOD && flag == 0 )
-      flag = 1;
-    else if( charCodes[currentChar] == CHAR_PERIOD && flag ) {
+        token->string[i] = currentChar;
+        i++;
+        readChar();
+      }
+      else if (charCodes[currentChar] == CHAR_RPAR)
+        flag = 1;
+      else if (charCodes[currentChar] == CHAR_PERIOD){
+        readChar();
+        if (charCodes[currentChar] == CHAR_RPAR){
+          dot++;
+          token->string[i] = '.';
+          i++;
+          token->string[i] = '0';
+          i++;
+          flag = 1;
+        }
+        else {
+          token->tokenType = TK_NONE;
+          error(ERR_INVALIDFLOAT, token->lineNo, token->colNo);
+          return token;
+        }
+      }
+      else {
+        dot++;
+        token->string[i] = '.';
+        i++;
+        token->string[i] = '0';
+        i++;
+      }
+    }
+  } while (charCodes[currentChar] == CHAR_DIGIT || charCodes[currentChar] == CHAR_PERIOD );
+  token->string[i] = 0;
+
+  if ( dot == 0 )
+      token->tokenType = TK_NUMBER;
+  else if ( dot > 1){
       token->tokenType = TK_NONE;
       error(ERR_INVALIDFLOAT, token->lineNo, token->colNo);
       return token;
-    }
-    token->string[i] = currentChar;
-    i++;
-    readChar();
   }
-  token->string[i] = 0;
   return token;
 }
 
@@ -163,9 +203,9 @@ Token* readString(void) {
     i++;
     readChar();
   }
-  while ( charCodes[currentChar] != CHAR_QUOTATION && i <= MAX_IDENT_LEN );
+  while ( charCodes[currentChar] != CHAR_QUOTATION && i <= MAX_IDENT_LEN && currentChar != EOF);
 
-  if ( i > MAX_IDENT_LEN ) {
+  if ( i > MAX_IDENT_LEN || currentChar == EOF ) {
     token->tokenType = TK_NONE;
     error(ERR_INVALIDSTRING, token->lineNo, token->colNo);
     return token;
@@ -196,57 +236,19 @@ Token* getToken(void) {
     return readIdentKeyword();
   case CHAR_DIGIT: 
     //return readNumber();
-    return readFloat();
+    return readIntFloat();
   case CHAR_QUOTATION:
     return readString();
 
   case CHAR_PLUS: 
     token = makeToken(SB_PLUS, lineNo, colNo);
     readChar();
-    if (charCodes[currentChar] == CHAR_DIGIT ){
-      int i = 1, flag = 0;
-      token->tokenType = TK_FLOAT;
-      token->string[0] = '+';
-
-      while ( charCodes[currentChar] == CHAR_DIGIT || charCodes[currentChar] == CHAR_PERIOD ){
-        if( charCodes[currentChar] == CHAR_PERIOD && flag == 0 )
-          flag = 1;
-        else if( charCodes[currentChar] == CHAR_PERIOD && flag ) {
-          token->tokenType = TK_NONE;
-          error(ERR_INVALIDFLOAT, token->lineNo, token->colNo);
-          return token;
-        }
-        token->string[i] = currentChar;
-        i++;
-        readChar();
-      }
-      token->string[i] = 0;
-    }
     return token;
     // ....
     // TODO
   case CHAR_MINUS:
     token = makeToken(SB_MINUS, lineNo, colNo);
     readChar(); 
-    if (charCodes[currentChar] == CHAR_DIGIT ){
-      int i = 1, flag = 0;
-      token->tokenType = TK_FLOAT;
-      token->string[0] = '-';
-
-      while ( charCodes[currentChar] == CHAR_DIGIT || charCodes[currentChar] == CHAR_PERIOD ){
-        if( charCodes[currentChar] == CHAR_PERIOD && flag == 0 )
-          flag = 1;
-        else if( charCodes[currentChar] == CHAR_PERIOD && flag ) {
-          token->tokenType = TK_NONE;
-          error(ERR_INVALIDFLOAT, token->lineNo, token->colNo);
-          return token;
-        }
-        token->string[i] = currentChar;
-        i++;
-        readChar();
-      }
-      token->string[i] = 0;
-    }
     return token;
   case CHAR_TIMES:
     token = makeToken(SB_TIMES, lineNo, colNo);
@@ -303,10 +305,10 @@ Token* getToken(void) {
       readChar();
     }
     else if (charCodes[currentChar] == CHAR_DIGIT ){
-      int i = 1;
+      int i = 2;
       token->tokenType = TK_FLOAT;
-      token->string[0] = '.';
-
+      token->string[0] = '0';
+      token->string[1] = '.';
       while ( charCodes[currentChar] == CHAR_DIGIT ){
         token->string[i] = currentChar;
         i++;
@@ -314,8 +316,13 @@ Token* getToken(void) {
       }
       token->string[i] = 0;
       if( charCodes[currentChar] == CHAR_PERIOD ) {
-        token->tokenType = TK_NONE;
-        error(ERR_INVALIDFLOAT, token->lineNo, token->colNo);
+        readChar();
+        if( charCodes[currentChar] == CHAR_RPAR )
+          flag = 1;
+        else {
+          token->tokenType = TK_NONE;
+          error(ERR_INVALIDFLOAT, token->lineNo, token->colNo);
+        }
       }
     }
     return token;
@@ -349,7 +356,12 @@ Token* getToken(void) {
     }
     return token;
   case CHAR_RPAR:
-    token = makeToken(SB_RPAR, lineNo, colNo);
+    if (flag == 1){
+      token = makeToken(SB_RSEL, lineNo, colNo-1);
+      flag = 0;
+    }
+    else 
+      token = makeToken(SB_RPAR, lineNo, colNo);
     readChar(); 
     return token;
     // ....
