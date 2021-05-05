@@ -1,0 +1,28 @@
+Program Example1; (* Example 5 *)
+TYPE A = INTEGER;
+VAR I:INTEGER;
+    D: STRING ;
+Begin
+I:= 1;
+D:="hello";
+I:= 5%2*I;
+DO
+	BEGIN
+	
+	WHILE I > 2 DO
+		BEGIN
+		DO 
+			BEGIN
+			I := 0;
+			D := "HI";
+			END
+		WHILE I > 2; 
+		I := I + 1; 
+		END;
+	
+	DO I:= 5 WHILE I < 3;
+	
+	END
+WHILE I < 5
+End. 
+(* Example 5 *)

@@ -464,6 +464,7 @@ void compileArguments(void) {
     case SB_MINUS:
     case KW_TO:
     case KW_DO:
+    case KW_WHILE:
     case SB_RPAR:
     case SB_COMMA:
     case SB_EQ:
@@ -575,6 +576,7 @@ void compileExpression3(void) {
       break;
     case KW_TO:
     case KW_DO:
+    case KW_WHILE:
     case SB_RPAR:
     case SB_COMMA:
     case SB_EQ:
@@ -622,6 +624,7 @@ void compileTerm2(void) {
     case SB_MINUS:
     case KW_TO:
     case KW_DO:
+    case KW_WHILE:
     case SB_RPAR:
     case SB_COMMA:
     case SB_EQ:

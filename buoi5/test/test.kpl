@@ -4,6 +4,10 @@ TYPE S = STRING;
 VAR A : STRING;
 
 BEGIN
-    CALL WRITEC(4%3)
-    DO WHILE
+    CALL WRITEC(4%3);
+    DO 
+        BEGIN
+        A := "HI"
+        END
+    WHILE A = 2;
 END.
