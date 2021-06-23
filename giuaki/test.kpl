@@ -1,0 +1,58 @@
+Program Test; (* Test *)
+const z= 5.2; m = 6; s = "helllllllllllllllllllllo"; k = 's'; y = 5; u = 1.2;
+TYPE T = INTEGER;
+VAR A : ARRAY(.10.) OF T;
+    I:double;
+    D:STRING;
+    G:INTEGER;
+
+PROCEDURE INPUT;
+VAR I : INTEGER;
+BEGIN
+  FOR I := 1 TO 10 DO
+     A(.I.) := READI;
+END;
+
+Begin
+DO
+	BEGIN
+	
+	WHILE I > 2.5 DO
+		BEGIN
+		DO 
+			BEGIN
+			I := 0;
+			D := "HI";
+			END
+		WHILE I > 2.; 
+		I := I + 1; 
+		END;
+	
+	DO I:= 5 WHILE I < 3.6;
+	
+	END
+WHILE I < 5.8;
+
+I:= 1.5;
+I:= -1.5;
+I:= +1.5;
+I:= +5.;
+I:= 5+2.5;
+I:= .5;
+I:= 5.;
+D:="hello";
+I:= 5.8 + 2;
+I:= 5 + 2.8;
+I:= 5 + 2;
+I,G := 5.6,5;
+I,G := 5, 3;
+I := A(.3.);
+A(.2.) := A(.3.);
+I,D := 4,"hello";
+
+I,G := 3;
+I := 4,"hello";
+m := 8;
+
+
+End. (* Test *)
